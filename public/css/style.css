@@ -1,0 +1,181 @@
+/* Import font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Raleway:400;600;700');
+
+/* KUNCI UTAMA: Reset Universal untuk mencegah masalah overflow */
+* {
+    box-sizing: border-box;
+}
+
+/* === Main Header Styling === */
+.app-header {
+    background-color: #0d2c3f; 
+    padding: 0 25px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+body.page-dashboard .app-header {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body.page-dashboard .app-header.scrolled {
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* === Logo Styling === */
+.logo-container { display: flex; align-items: center; text-decoration: none; }
+.logo-image { height: 40px; margin-right: 12px; }
+.logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    transition: color 0.4s ease;
+}
+body.page-dashboard .app-header.scrolled .logo-text { color: #0d2c3f; }
+
+/* === Tombol Hamburger (Mobile) === */
+.mobile-nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1010;
+}
+.hamburger-bar {
+    width: 30px;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 10px;
+    transition: all 0.3s linear;
+}
+body.page-dashboard .app-header.scrolled .hamburger-bar {
+    background-color: #0d2c3f;
+}
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+
+/* === Navigation Links (Mobile First) === */
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 100px 30px 30px 30px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 280px;
+    background: #0d2c3f;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1005;
+}
+
+.main-nav ul.active {
+    transform: translateX(0);
+}
+.main-nav a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 8px 0;
+}
+.main-nav a.active { color: #fff; font-weight: 700; }
+.logout-button {
+    background: #1a4f6d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* === Desktop Styles (Layar Lebar) === */
+@media (min-width: 1200px) {
+    .app-header {
+        padding: 0 40px;
+    }
+    .mobile-nav-toggle {
+        display: none;
+    }
+    .main-nav {
+        display: block;
+    }
+    .main-nav ul {
+        position: static;
+        flex-direction: row;
+        height: auto;
+        width: auto;
+        background: none;
+        box-shadow: none;
+        padding: 0;
+        transform: translateX(0);
+        gap: 15px;
+        align-items: center;
+        z-index: auto;
+    }
+    .main-nav a, .logout-button { font-size: 1rem; padding: 8px 16px; }
+    
+    body.page-dashboard .app-header.scrolled .main-nav a {
+        color: #4a5568;
+    }
+
+    /* === BARIS INI TELAH DIPERBAIKI === */
+    body.page-dashboard .app-header.scrolled .main-nav a:hover {
+        background-color: #f1f5f9; /* Menggunakan warna abu-abu muda */
+        color: #0d2c3f;
+    }
+
+    body.page-dashboard .app-header.scrolled .main-nav a.active {
+        color: #1a4f6d;
+    }
+    
+    .logout-button {
+        background-color: transparent;
+        border: 2px solid #fff;
+        margin-left: 15px;
+        width: auto;
+        transition: all 0.3s ease;
+    }
+    body.page-dashboard .app-header.scrolled .logout-button {
+        background-color: #1a4f6d;
+        border-color: #1a4f6d;
+        color: #fff;
+    }
+    .logout-button:hover { background-color: rgba(255, 255, 255, 0.1); }
+    body.page-dashboard .app-header.scrolled .logout-button:hover {
+        background-color: #0d2c3f;
+        border-color: #0d2c3f;
+        transform: translateY(-2px);
+    }
+}
