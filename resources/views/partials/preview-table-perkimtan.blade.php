@@ -5,11 +5,8 @@
     <thead>
         <tr>
             <th>Bulan</th>
-            <th>Jumlah Barang Dikirim (Kg)</th>
-            <th>Jumlah Barang Diterima (Kg)</th>
-            <th>Jumlah Surat Dikirim</th>
-            <th>Jumlah Surat Diterima</th>
-            <th>Jumlah Wesel Pos (Rp)</th>
+            <th>Jumlah Proyek</th>
+            <th>Nilai Proyek (Rp)</th>
         </tr>
     </thead>
     <tbody>
@@ -18,13 +15,10 @@
             <td>{{ $row[0] ?? '-' }}</td>
             <td>{{ $row[1] ?? '-' }}</td>
             <td>{{ $row[2] ?? '-' }}</td>
-            <td>{{ $row[3] ?? '-' }}</td>
-            <td>{{ $row[4] ?? '-' }}</td>
-            <td>{{ $row[5] ?? '-' }}</td>
         </tr>
         @empty
         <tr>
-            <td colspan="6" style="text-align: center;">Tidak ada data pratinjau yang dapat ditampilkan.</td>
+            <td colspan="3" style="text-align: center;">Tidak ada data pratinjau yang dapat ditampilkan.</td>
         </tr>
         @endforelse
     </tbody>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Form Dinas Perdagangan')
+@section('title', 'Form Diskominfo')
 
 @section('body-class', 'page-form')
 
@@ -9,7 +9,7 @@
     <div class="form-container">
         <div class="form-header">
             <h1>Formulir Bulanan</h1>
-            <p>Dinas Perdagangan</p>
+            <p>Dinas Komunikasi dan Informatika</p>
         </div>
 
         @if(session('success'))
@@ -21,7 +21,7 @@
 
         <form action="{{ route('data.store') }}" method="POST" id="data-form">
             @csrf
-            <input type="hidden" name="nama_instansi" value="Dinas Perdagangan">
+            <input type="hidden" name="nama_instansi" value="Dinas Komunikasi dan Informatika">
             <div class="form-group">
                 <label for="bulan">Pilih Bulan Pelaporan:</label>
                 <select id="bulan" name="bulan" required>
@@ -42,42 +42,26 @@
             </div>
 
             <fieldset>
-                <legend>Data Perdagangan</legend>
+                <legend>Kantor Berita</legend>
                 <div class="form-group">
-                    <label for="pedagang_kaki_lima">Jumlah Pedagang Kaki Lima:</label>
-                    <input type="number" step="1" id="pedagang_kaki_lima" name="perdagangan_pedagang_kaki_lima" required value="0">
+                    <label for="jumlah_kantor_berita">Jumlah Kantor Berita (Unit):</label>
+                    <input type="number" step="1" id="jumlah_kantor_berita" name="diskominfo_jumlah_kantor_berita" required placeholder="Jumlah unit" value="0">
                 </div>
                 <div class="form-group">
-                    <label for="warung_toko">Jumlah Warung/Toko:</label>
-                    <input type="number" step="1" id="warung_toko" name="perdagangan_warung_toko" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="minimarket">Jumlah Minimarket:</label>
-                    <input type="number" step="1" id="minimarket" name="perdagangan_minimarket" required value="0">
+                    <label for="pendapatan_kantor_berita">Pendapatan Kantor Berita (Rp):</label>
+                    <input type="number" step="any" id="pendapatan_kantor_berita" name="diskominfo_pendapatan_kantor_berita" required placeholder="Total pendapatan" value="0">
                 </div>
             </fieldset>
 
             <fieldset>
-                <legend>Industri Kecil & Menengah (IKM)</legend>
+                <legend>Radio Swasta</legend>
                 <div class="form-group">
-                    <label for="imk_jumlah">Jumlah Unit Usaha:</label>
-                    <input type="number" step="1" id="imk_jumlah" name="perdagangan_imk_jumlah" required value="0">
+                    <label for="jumlah_radio_swasta">Jumlah Radio Swasta (Unit):</label>
+                    <input type="number" step="1" id="jumlah_radio_swasta" name="diskominfo_jumlah_radio_swasta" required placeholder="Jumlah unit" value="0">
                 </div>
                 <div class="form-group">
-                    <label for="imk_pendapatan">Pendapatan (Rp):</label>
-                    <input type="number" step="any" id="imk_pendapatan" name="perdagangan_imk_pendapatan" required value="0">
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Industri Besar & Sedang (IBS)</legend>
-                <div class="form-group">
-                    <label for="ibs_jumlah">Jumlah Unit Usaha:</label>
-                    <input type="number" step="1" id="ibs_jumlah" name="perdagangan_ibs_jumlah" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="ibs_pendapatan">Pendapatan (Rp):</label>
-                    <input type="number" step="any" id="ibs_pendapatan" name="perdagangan_ibs_pendapatan" required value="0">
+                    <label for="pendapatan_radio_swasta">Pendapatan Radio Swasta (Rp):</label>
+                    <input type="number" step="any" id="pendapatan_radio_swasta" name="diskominfo_pendapatan_radio_swasta" required placeholder="Total pendapatan" value="0">
                 </div>
             </fieldset>
 
@@ -86,6 +70,14 @@
                 <div class="loader"></div>
             </button>
         </form>
+
+        <div class="info-box">
+            <h4>Petunjuk Pengisian</h4>
+            <ul>
+                <li>Isi jumlah unit dan total pendapatan untuk masing-masing kategori.</li>
+                <li>Isi dengan angka <strong>0</strong> jika tidak ada data.</li>
+            </ul>
+        </div>
     </div>
 
     <div class="preview-container">
@@ -98,8 +90,8 @@
         </div>
 
         <div class="table-wrapper">
-            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('Dinas Perdagangan')) }}">
-                @include('partials.preview-table-dinas-perdagangan', ['sheetData' => $sheetData, 'previewError' => $previewError])
+            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('Dinas Komunikasi dan Informatika')) }}">
+                @include('partials.preview-table-diskominfo', ['sheetData' => $sheetData, 'previewError' => $previewError])
             </div>
         </div>
     </div>

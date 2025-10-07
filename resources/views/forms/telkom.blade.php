@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Form Dinas Perdagangan')
-
 @section('body-class', 'page-form')
 
 @section('content')
@@ -9,7 +7,7 @@
     <div class="form-container">
         <div class="form-header">
             <h1>Formulir Bulanan</h1>
-            <p>Dinas Perdagangan</p>
+            <p>TELKOM</p>
         </div>
 
         @if(session('success'))
@@ -21,7 +19,7 @@
 
         <form action="{{ route('data.store') }}" method="POST" id="data-form">
             @csrf
-            <input type="hidden" name="nama_instansi" value="Dinas Perdagangan">
+            <input type="hidden" name="nama_instansi" value="TELKOM">
             <div class="form-group">
                 <label for="bulan">Pilih Bulan Pelaporan:</label>
                 <select id="bulan" name="bulan" required>
@@ -41,45 +39,22 @@
                 </select>
             </div>
 
-            <fieldset>
-                <legend>Data Perdagangan</legend>
-                <div class="form-group">
-                    <label for="pedagang_kaki_lima">Jumlah Pedagang Kaki Lima:</label>
-                    <input type="number" step="1" id="pedagang_kaki_lima" name="perdagangan_pedagang_kaki_lima" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="warung_toko">Jumlah Warung/Toko:</label>
-                    <input type="number" step="1" id="warung_toko" name="perdagangan_warung_toko" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="minimarket">Jumlah Minimarket:</label>
-                    <input type="number" step="1" id="minimarket" name="perdagangan_minimarket" required value="0">
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Industri Kecil & Menengah (IKM)</legend>
-                <div class="form-group">
-                    <label for="imk_jumlah">Jumlah Unit Usaha:</label>
-                    <input type="number" step="1" id="imk_jumlah" name="perdagangan_imk_jumlah" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="imk_pendapatan">Pendapatan (Rp):</label>
-                    <input type="number" step="any" id="imk_pendapatan" name="perdagangan_imk_pendapatan" required value="0">
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Industri Besar & Sedang (IBS)</legend>
-                <div class="form-group">
-                    <label for="ibs_jumlah">Jumlah Unit Usaha:</label>
-                    <input type="number" step="1" id="ibs_jumlah" name="perdagangan_ibs_jumlah" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="ibs_pendapatan">Pendapatan (Rp):</label>
-                    <input type="number" step="any" id="ibs_pendapatan" name="perdagangan_ibs_pendapatan" required value="0">
-                </div>
-            </fieldset>
+            <div class="form-group">
+                <label for="penjualan_pulsa">Penjualan Pulsa (Rp):</label>
+                <input type="number" step="any" id="penjualan_pulsa" name="telkom_penjualan_pulsa" required placeholder="Total penjualan">
+            </div>
+            <div class="form-group">
+                <label for="penjualan_internet">Penjualan Internet (Rp):</label>
+                <input type="number" step="any" id="penjualan_internet" name="telkom_penjualan_internet" required placeholder="Total penjualan">
+            </div>
+            <div class="form-group">
+                <label for="penjualan_wifi">Penjualan WIFI (Rp):</label>
+                <input type="number" step="any" id="penjualan_wifi" name="telkom_penjualan_wifi" required placeholder="Total penjualan">
+            </div>
+            <div class="form-group">
+                <label for="penjualan_kartu_perdana">Penjualan Kartu Perdana (Rp):</label>
+                <input type="number" step="any" id="penjualan_kartu_perdana" name="telkom_penjualan_kartu_perdana" required placeholder="Total penjualan">
+            </div>
 
             <button type="submit" class="submit-btn">
                 <span class="btn-text">Kirim Data</span>
@@ -96,10 +71,9 @@
             </div>
             <p>Data terkini dari Google Sheet.</p>
         </div>
-
         <div class="table-wrapper">
-            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('Dinas Perdagangan')) }}">
-                @include('partials.preview-table-dinas-perdagangan', ['sheetData' => $sheetData, 'previewError' => $previewError])
+            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('TELKOM')) }}">
+                @include('partials.preview-table-telkom', ['sheetData' => $sheetData, 'previewError' => $previewError])
             </div>
         </div>
     </div>
@@ -129,7 +103,6 @@
                 btn.disabled = false;
             });
     });
-
     document.addEventListener('DOMContentLoaded', function() {
         const dataForm = document.getElementById('data-form');
         if (dataForm) {

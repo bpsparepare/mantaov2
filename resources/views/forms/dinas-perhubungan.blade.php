@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Form Mandiri Taspen')
+@section('title', 'Form DPRD Kota Parepare')
 
 @section('body-class', 'page-form')
 
@@ -8,8 +8,8 @@
 <div class="main-container">
     <div class="form-container">
         <div class="form-header">
-            <h1>Formulir Bulanan</h1>
-            <p>Mandiri Taspen</p>
+            <h1>Formulir Tahunan</h1>
+            <p>DPRD Kota Parepare</p>
         </div>
 
         @if(session('success'))
@@ -21,29 +21,32 @@
 
         <form action="{{ route('data.store') }}" method="POST" id="data-form">
             @csrf
-            <input type="hidden" name="nama_instansi" value="Mandiri Taspen">
+            <input type="hidden" name="nama_instansi" value="DPRD Kota Parepare">
             <div class="form-group">
-                <label for="bulan">Pilih Bulan Pelaporan:</label>
-                <select id="bulan" name="bulan" required>
-                    <option value="" disabled selected>-- Pilih Bulan --</option>
-                    <option value="Januari">Januari</option>
-                    <option value="Februari">Februari</option>
-                    <option value="Maret">Maret</option>
-                    <option value="April">April</option>
-                    <option value="Mei">Mei</option>
-                    <option value="Juni">Juni</option>
-                    <option value="Juli">Juli</option>
-                    <option value="Agustus">Agustus</option>
-                    <option value="September">September</option>
-                    <option value="Oktober">Oktober</option>
-                    <option value="November">November</option>
-                    <option value="Desember">Desember</option>
+                <label for="tahun">Pilih Tahun Pelaporan:</label>
+                <select id="tahun" name="tahun" required>
+                    <option value="" disabled selected>-- Pilih Tahun --</option>
+                    @if(isset($sheetData['years']))
+                    @foreach($sheetData['years'] as $year)
+                    <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                    @endif
+                    <option value="new_year" style="font-weight: bold;">+ Tambah Tahun Baru</option>
                 </select>
+
+                <div class="new-year-input" id="new-year-container" style="display:none; margin-top: 15px;">
+                    <label for="tahun_baru">Masukkan Tahun Baru:</label>
+                    <input type="number" name="tahun_baru" id="tahun_baru" placeholder="Contoh: {{ date('Y') + 1 }}">
+                </div>
             </div>
 
             <div class="form-group">
-                <label for="jumlah_klaim">Jumlah Klaim Pensiun (Rp):</label>
-                <input type="number" step="any" id="jumlah_klaim" name="taspen_jumlah_klaim" required placeholder="Contoh: 14761572400">
+                <label>Jumlah Anggota Laki-laki:</label>
+                <input type="number" name="dprd_jumlah_laki" required value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label>Jumlah Anggota Perempuan:</label>
+                <input type="number" name="dprd_jumlah_perempuan" required value="0" min="0">
             </div>
 
             <button type="submit" class="submit-btn">
@@ -55,8 +58,8 @@
         <div class="info-box">
             <h4>Petunjuk Pengisian</h4>
             <ul>
-                <li>Masukkan jumlah total klaim dalam Rupiah, tanpa titik, koma, atau simbol "Rp".</li>
-                <li>Isi dengan angka <strong>0</strong> jika tidak ada klaim pada bulan tersebut.</li>
+                <li>Pilih tahun yang sudah ada untuk memperbarui data, atau pilih "+ Tambah Tahun Baru" untuk menambahkan data tahun berikutnya.</li>
+                <li>Masukkan jumlah total anggota DPRD berdasarkan jenis kelamin.</li>
             </ul>
         </div>
     </div>
@@ -64,15 +67,14 @@
     <div class="preview-container">
         <div class="preview-header">
             <div class="preview-header-content">
-                <h1>Pratinjau Data {{ date('Y') }}</h1>
+                <h1>Pratinjau Data</h1>
                 <button type="button" class="reload-btn" id="reload-preview-btn">Muat Ulang</button>
             </div>
             <p>Data terkini dari Google Sheet.</p>
         </div>
-
         <div class="table-wrapper">
-            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('Mandiri Taspen')) }}">
-                @include('partials.preview-table-mandiri-taspen', ['sheetData' => $sheetData, 'previewError' => $previewError])
+            <div id="preview-table-container" data-url="{{ route('preview.data', $slugInstansi) }}">
+                @include('partials.preview-table-dprd', ['sheetData' => $sheetData, 'previewError' => $previewError])
             </div>
         </div>
     </div>
@@ -81,6 +83,17 @@
 
 @push('scripts')
 <script>
+    document.getElementById('tahun').addEventListener('change', function() {
+        const newYearContainer = document.getElementById('new-year-container');
+        if (this.value === 'new_year') {
+            newYearContainer.style.display = 'block';
+            document.getElementById('tahun_baru').required = true;
+        } else {
+            newYearContainer.style.display = 'none';
+            document.getElementById('tahun_baru').required = false;
+        }
+    });
+
     document.getElementById('reload-preview-btn').addEventListener('click', function() {
         const btn = this;
         const container = document.getElementById('preview-table-container');

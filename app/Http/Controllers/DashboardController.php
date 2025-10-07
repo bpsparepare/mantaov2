@@ -64,7 +64,15 @@ class DashboardController extends Controller
             'Universitas Muhammadiyah Parepare',
             'Universitas Negeri Makassar - Parepare',
             'Perumahan',
-            'Swadharma Sarana Informatika'
+            'Swadharma Sarana Informatika',
+            'KPPN',
+            'Dinas PUPR',
+            'UPTD Pasar',
+            'Dinas Komunikasi dan Informatika',
+            'TELKOM',
+            'Dinas Perkimtan',
+            'Pengadilan Negeri',
+            'Dinas Kesehatan',
         ];
 
         $logos = [
@@ -97,7 +105,15 @@ class DashboardController extends Controller
             'Universitas Muhammadiyah Parepare' => '/images/Logo-umpar.png',
             'Universitas Negeri Makassar - Parepare' => '/images/Logo-UNM.png',
             'Perumahan' => '/images/Logo-perumahan.png',
-            'Swadharma Sarana Informatika' => '/images/Logo-SSI.png'
+            'Swadharma Sarana Informatika' => '/images/Logo-SSI.png',
+            'KPPN' => '/images/Logo-kppn.png',
+            'Dinas PUPR' => '/images/Logo-PUPR.png',
+            'UPTD Pasar' => '/images/Logo-UPTD-Pasar.png',
+            'Dinas Komunikasi dan Informatika' => '/images/Logo-kominfo.png',
+            'TELKOM' => '/images/Logo-TELKOM.png',
+            'Dinas Perkimtan' => '/images/Logo-dinas-perkimtan.png',
+            'Pengadilan Negeri' => '/images/Logo-pengadilan-negeri.png',
+            'Dinas Kesehatan' => '/images/Logo-dinas-kesehatan.png',
         ];
 
         $data = [];

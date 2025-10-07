@@ -7,11 +7,15 @@ use Google\Client as GoogleClient;
 use Google\Service\Sheets as GoogleSheets;
 use Google\Service\Sheets\ValueRange;
 use Google\Service\Sheets\BatchUpdateValuesRequest;
+use Google\Service\Drive as GoogleDrive;
+use Google\Service\Drive\DriveFile;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 
 class SubmissionController extends Controller
 {
     /**
-     * Titik masuk utama untuk semua pengiriman data form.
+     * Menangani submit data numerik dari semua form.
      */
     public function store(Request $request)
     {
@@ -28,7 +32,6 @@ class SubmissionController extends Controller
                 return back()->with('error', 'Konfigurasi Spreadsheet ID untuk ' . $namaInstansi . ' belum diisi.');
             }
 
-            // Tangani DPRD secara khusus karena formatnya berbeda (tidak pakai sheet tahunan)
             if ($namaInstansi === 'DPRD Kota Parepare') {
                 return $this->handleDprdSubmission($sheets, $spreadsheetId, $request);
             }
@@ -40,6 +43,7 @@ class SubmissionController extends Controller
             $updateFormatInstansi = [
                 'Badan Urusan Logistik (BULOG)',
                 'Dinas Lingkungan Hidup',
+                'Dinas Perhubungan',
                 'Dinas Pertanian, Kelautan dan Perikanan',
                 'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)',
                 'Perusahaan Es Balok',
@@ -64,7 +68,15 @@ class SubmissionController extends Controller
                 'Universitas Muhammadiyah Parepare',
                 'Universitas Negeri Makassar - Parepare',
                 'Perumahan',
-                'Swadharma Sarana Informatika'
+                'Swadharma Sarana Informatika',
+                'KPPN',
+                'Dinas PUPR',
+                'UPTD Pasar',
+                'Dinas Komunikasi dan Informatika',
+                'TELKOM',
+                'Dinas Perkimtan',
+                'Pengadilan Negeri',
+                'Dinas Kesehatan',
             ];
 
             if (in_array($namaInstansi, $updateFormatInstansi)) {
@@ -78,6 +90,66 @@ class SubmissionController extends Controller
                 return back()->with('error', 'Gagal: Periode pengisian untuk data ini telah berakhir atau sheet terkunci. Silakan hubungi admin BPS.');
             }
             return back()->with('error', 'Terjadi kesalahan sistem: ' . $errorMessage);
+        }
+    }
+
+    public function uploadFile(Request $request)
+    {
+        $request->validate([
+            'nama_instansi' => 'required|string',
+            'rincian_file' => 'required|file|mimes:pdf,xls,xlsx,csv|max:5120', // Max 5MB
+        ], [
+            'rincian_file.required' => 'Pilih file yang akan diunggah.',
+            'rincian_file.mimes' => 'Format file harus PDF, Excel (xls, xlsx), atau CSV.',
+            'rincian_file.max' => 'Ukuran file tidak boleh lebih dari 5MB.',
+        ]);
+
+        try {
+            $namaInstansi = $request->input('nama_instansi');
+            $folderId = config('pdrb.drive_folder_ids.' . $namaInstansi);
+            if (!$folderId) {
+                return back()->with('error', 'ID Folder Google Drive belum diatur.');
+            }
+
+            // --- LOGIKA BARU UNTUK OTENTIKASI ---
+            $client = new GoogleClient();
+            $client->setAuthConfig(storage_path('app/oauth_credentials.json'));
+            $client->addScope(GoogleDrive::DRIVE);
+
+            $tokenPath = storage_path('app/gdrive_token.json');
+            if (!file_exists($tokenPath)) {
+                return back()->with('error', 'File token Google Drive tidak ditemukan. Harap lakukan otorisasi.');
+            }
+
+            $accessToken = json_decode(file_get_contents($tokenPath), true);
+            $client->setAccessToken($accessToken);
+
+            // Jika token kedaluwarsa, refresh dan simpan token baru
+            if ($client->isAccessTokenExpired()) {
+                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+                Storage::disk('local')->put('gdrive_token.json', json_encode($client->getAccessToken()));
+            }
+            // --- AKHIR LOGIKA BARU ---
+
+            $file = $request->file('rincian_file');
+            $originalFileName = $file->getClientOriginalName();
+            $newFileName = date('Y-m-d_His') . '_' . $originalFileName;
+
+            $driveService = new GoogleDrive($client);
+            $driveFile = new DriveFile([
+                'name' => $newFileName,
+                'parents' => [$folderId]
+            ]);
+
+            $driveService->files->create($driveFile, [
+                'data' => file_get_contents($file->getRealPath()),
+                'mimeType' => $file->getMimeType(),
+                'uploadType' => 'multipart'
+            ]);
+
+            return back()->with('success', 'File rincian berhasil diunggah!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengunggah file: ' . $e->getMessage());
         }
     }
 
@@ -153,6 +225,27 @@ class SubmissionController extends Controller
                 $row = $monthToRow[$bulan] ?? null;
                 if (!$row) return back()->with('error', 'Bulan tidak valid.');
                 $fieldToColumnMap = ['dlh_volume_timbulan' => 'B', 'dlh_volume_ditangani' => 'C', 'dlh_volume_dikelola' => 'D'];
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'Dinas Perhubungan':
+                $monthToRow = ['Januari' => 3, 'Februari' => 4, 'Maret' => 5, 'April' => 6, 'Mei' => 7, 'Juni' => 8, 'Juli' => 9, 'Agustus' => 10, 'September' => 11, 'Oktober' => 12, 'November' => 13, 'Desember' => 14];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'dishub_darat_penumpang' => 'B',
+                    'dishub_darat_barang' => 'C',
+                    'dishub_laut_penumpang' => 'D',
+                    'dishub_laut_barang' => 'E',
+                ];
+
                 foreach ($fieldToColumnMap as $field => $column) {
                     $value = $request->input($field);
                     $valueRange = new ValueRange();
@@ -369,33 +462,16 @@ class SubmissionController extends Controller
                 break;
 
             case 'Pos Indonesia':
-                $request->validate([
-                    'pos_surat_dikirim' => 'required|numeric|min:0',
-                    'pos_surat_diterima' => 'required|numeric|min:0',
-                    'pos_wesel_pos' => 'required|numeric|min:0',
-                ]);
-
-                $monthToRow = [
-                    'Januari' => 2,
-                    'Februari' => 3,
-                    'Maret' => 4,
-                    'April' => 5,
-                    'Mei' => 6,
-                    'Juni' => 7,
-                    'Juli' => 8,
-                    'Agustus' => 9,
-                    'September' => 10,
-                    'Oktober' => 11,
-                    'November' => 12,
-                    'Desember' => 13
-                ];
+                $monthToRow = ['Januari' => 2, 'Februari' => 3, 'Maret' => 4, 'April' => 5, 'Mei' => 6, 'Juni' => 7, 'Juli' => 8, 'Agustus' => 9, 'September' => 10, 'Oktober' => 11, 'November' => 12, 'Desember' => 13];
                 $row = $monthToRow[$bulan] ?? null;
                 if (!$row) return back()->with('error', 'Bulan tidak valid.');
 
                 $fieldToColumnMap = [
-                    'pos_surat_dikirim' => 'B',
-                    'pos_surat_diterima' => 'C',
-                    'pos_wesel_pos' => 'D',
+                    'pos_barang_dikirim' => 'B',
+                    'pos_barang_diterima' => 'C',
+                    'pos_surat_dikirim' => 'D',
+                    'pos_surat_diterima' => 'E',
+                    'pos_wesel_pos' => 'F',
                 ];
 
                 foreach ($fieldToColumnMap as $field => $column) {
@@ -606,11 +682,23 @@ class SubmissionController extends Controller
                 $row = $monthToRow[$bulan] ?? null;
                 if (!$row) return back()->with('error', 'Bulan tidak valid.');
 
-                $value = $request->input('perdagangan_jumlah_pedagang');
-                $valueRange = new ValueRange();
-                $valueRange->setRange($sheetName . '!B' . $row);
-                $valueRange->setValues([[$value]]);
-                $dataToUpdate[] = $valueRange;
+                $fieldToColumnMap = [
+                    'perdagangan_pedagang_kaki_lima' => 'B',
+                    'perdagangan_warung_toko' => 'C',
+                    'perdagangan_minimarket' => 'D',
+                    'perdagangan_imk_jumlah' => 'E',
+                    'perdagangan_imk_pendapatan' => 'F',
+                    'perdagangan_ibs_jumlah' => 'G',
+                    'perdagangan_ibs_pendapatan' => 'H',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
                 break;
 
             case 'Perusahaan Es Kristal':
@@ -775,6 +863,167 @@ class SubmissionController extends Controller
                 }
                 break;
 
+            case 'KPPN':
+                $monthToRow = ['Januari' => 3, 'Februari' => 4, 'Maret' => 5, 'April' => 6, 'Mei' => 7, 'Juni' => 8, 'Juli' => 9, 'Agustus' => 10, 'September' => 11, 'Oktober' => 12, 'November' => 13, 'Desember' => 14];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'kppn_belanja_pegawai' => 'B',
+                    'kppn_modal_kontraktual_fisik' => 'C',
+                    'kppn_modal_kontraktual_nonfisik' => 'D',
+                    'kppn_modal_nonkontraktual' => 'E',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'Dinas PUPR':
+                $monthToRow = ['Januari' => 2, 'Februari' => 3, 'Maret' => 4, 'April' => 5, 'Mei' => 6, 'Juni' => 7, 'Juli' => 8, 'Agustus' => 9, 'September' => 10, 'Oktober' => 11, 'November' => 12, 'Desember' => 13];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'pupr_jumlah_proyek' => 'B',
+                    'pupr_jenis_konstruksi' => 'C',
+                    'pupr_nilai_proyek' => 'D',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'UPTD Pasar':
+                $monthToRow = ['Januari' => 3, 'Februari' => 4, 'Maret' => 5, 'April' => 6, 'Mei' => 7, 'Juni' => 8, 'Juli' => 9, 'Agustus' => 10, 'September' => 11, 'Oktober' => 12, 'November' => 13, 'Desember' => 14];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'pasar_lakessi_pedagang' => 'B',
+                    'pasar_lakessi_pendapatan' => 'C',
+                    'pasar_senggol_pedagang' => 'D',
+                    'pasar_senggol_pendapatan' => 'E',
+                    'pasar_labukkang_pedagang' => 'F',
+                    'pasar_labukkang_pendapatan' => 'G',
+                    'pasar_sumpang_pedagang' => 'H',
+                    'pasar_sumpang_pendapatan' => 'I',
+                    'pasar_wekke_e_pedagang' => 'J',
+                    'pasar_wekke_e_pendapatan' => 'K',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'Dinas Komunikasi dan Informatika':
+                $monthToRow = ['Januari' => 2, 'Februari' => 3, 'Maret' => 4, 'April' => 5, 'Mei' => 6, 'Juni' => 7, 'Juli' => 8, 'Agustus' => 9, 'September' => 10, 'Oktober' => 11, 'November' => 12, 'Desember' => 13];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'diskominfo_jumlah_kantor_berita' => 'B',
+                    'diskominfo_pendapatan_kantor_berita' => 'C',
+                    'diskominfo_jumlah_radio_swasta' => 'D',
+                    'diskominfo_pendapatan_radio_swasta' => 'E',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'TELKOM':
+                $monthToRow = ['Januari' => 2, 'Februari' => 3, 'Maret' => 4, 'April' => 5, 'Mei' => 6, 'Juni' => 7, 'Juli' => 8, 'Agustus' => 9, 'September' => 10, 'Oktober' => 11, 'November' => 12, 'Desember' => 13];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'telkom_penjualan_pulsa' => 'B',
+                    'telkom_penjualan_internet' => 'C',
+                    'telkom_penjualan_wifi' => 'D',
+                    'telkom_penjualan_kartu_perdana' => 'E',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'Dinas Perkimtan':
+                $monthToRow = ['Januari' => 2, 'Februari' => 3, 'Maret' => 4, 'April' => 5, 'Mei' => 6, 'Juni' => 7, 'Juli' => 8, 'Agustus' => 9, 'September' => 10, 'Oktober' => 11, 'November' => 12, 'Desember' => 13];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'perkimtan_jumlah_proyek' => 'B',
+                    'perkimtan_nilai_proyek' => 'C',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
+
+            case 'Pengadilan Negeri':
+                $monthToRow = ['Januari' => 2, 'Februari' => 3, 'Maret' => 4, 'April' => 5, 'Mei' => 6, 'Juni' => 7, 'Juli' => 8, 'Agustus' => 9, 'September' => 10, 'Oktober' => 11, 'November' => 12, 'Desember' => 13];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $value = $request->input('pn_jumlah_kasus');
+                $valueRange = new ValueRange();
+                $valueRange->setRange($sheetName . '!B' . $row);
+                $valueRange->setValues([[$value]]);
+                $dataToUpdate[] = $valueRange;
+                break;
+
+            case 'Dinas Kesehatan':
+                $monthToRow = ['Januari' => 3, 'Februari' => 4, 'Maret' => 5, 'April' => 6, 'Mei' => 7, 'Juni' => 8, 'Juli' => 9, 'Agustus' => 10, 'September' => 11, 'Oktober' => 12, 'November' => 13, 'Desember' => 14];
+                $row = $monthToRow[$bulan] ?? null;
+                if (!$row) return back()->with('error', 'Bulan tidak valid.');
+
+                $fieldToColumnMap = [
+                    'dinkes_puskesmas_rawat_inap' => 'B',
+                    'dinkes_puskesmas_rawat_jalan' => 'C',
+                    'dinkes_rs_rawat_inap' => 'D',
+                    'dinkes_rs_rawat_jalan' => 'E',
+                ];
+
+                foreach ($fieldToColumnMap as $field => $column) {
+                    $value = $request->input($field);
+                    $valueRange = new ValueRange();
+                    $valueRange->setRange($sheetName . '!' . $column . $row);
+                    $valueRange->setValues([[$value]]);
+                    $dataToUpdate[] = $valueRange;
+                }
+                break;
             default:
                 return back()->with('error', 'Logika UPDATE untuk ' . $namaInstansi . ' belum dibuat.');
         }

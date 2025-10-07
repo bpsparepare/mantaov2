@@ -10,6 +10,8 @@
     {{-- Link ke file CSS baru di folder public --}}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('css/form-style.css') }}">
+
     {{-- Font Awesome (jika Anda butuh ikon) --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 

@@ -7,6 +7,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\InternalController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Google\Client as GoogleClient;
+use Google\Service\Drive as GoogleDrive;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +45,8 @@ Route::middleware('auth.custom')->group(function () {
 
     Route::post('/submit-data', [SubmissionController::class, 'store'])->name('data.store');
 
+    Route::post('/upload-file', [SubmissionController::class, 'uploadFile'])->name('file.upload');
+
     Route::get('/preview-data/{slugInstansi}', [FormController::class, 'fetchPreviewData'])->name('preview.data');
 
     // DITAMBAHKAN: Rute ini dijaga oleh middleware 'admin'
@@ -53,3 +59,26 @@ Route::middleware('auth.custom')->group(function () {
         ->name('internal.user.create')
         ->middleware('admin');
 });
+
+// RUTE SEMENTARA UNTUK OTORISASI GOOGLE DRIVE
+Route::get('/google-auth/generate-token', function () {
+    $client = new GoogleClient();
+    $client->setAuthConfig(storage_path('app/oauth_credentials.json'));
+    $client->addScope(GoogleDrive::DRIVE);
+    $client->setRedirectUri(route('google.callback'));
+    $client->setAccessType('offline');
+    $client->setPrompt('select_account consent');
+    return redirect()->to($client->createAuthUrl());
+})->name('google.auth');
+
+Route::get('/google/callback', function (Request $request) {
+    $client = new GoogleClient();
+    $client->setAuthConfig(storage_path('app/oauth_credentials.json'));
+    $client->setRedirectUri(route('google.callback'));
+
+    $token = $client->fetchAccessTokenWithAuthCode($request->code);
+
+    Storage::disk('local')->put('gdrive_token.json', json_encode($token));
+
+    return 'Token berhasil dibuat! File <strong>gdrive_token.json</strong> telah disimpan di folder <strong>storage/app/</strong>. Anda bisa menutup halaman ini.';
+})->name('google.callback');

@@ -33,6 +33,7 @@ class FormController extends Controller
         $partialViewMap = [
             'Dinas Lingkungan Hidup' => 'partials.preview-table-dlh',
             'Badan Urusan Logistik (BULOG)' => 'partials.preview-table-bulog',
+            'Dinas Perhubungan' => 'partials.preview-table-dinas-perhubungan',
             'Dinas Pertanian, Kelautan dan Perikanan' => 'partials.preview-table-pkp',
             'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)' => 'partials.preview-table-dpmptsp',
             'DPRD Kota Parepare' => 'partials.preview-table-dprd',
@@ -59,6 +60,14 @@ class FormController extends Controller
             'Universitas Negeri Makassar - Parepare' => 'partials.preview-table-unm',
             'Perumahan' => 'partials.preview-table-perumahan',
             'Swadharma Sarana Informatika' => 'partials.preview-table-ssi',
+            'KPPN' => 'partials.preview-table-kppn',
+            'Dinas PUPR' => 'partials.preview-table-pupr',
+            'UPTD Pasar' => 'partials.preview-table-uptd-pasar',
+            'Dinas Komunikasi dan Informatika' => 'partials.preview-table-diskominfo',
+            'TELKOM' => 'partials.preview-table-telkom',
+            'Dinas Perkimtan' => 'partials.preview-table-perkimtan',
+            'Pengadilan Negeri' => 'partials.preview-table-pengadilan-negeri',
+            'Dinas Kesehatan' => 'partials.preview-table-dinas-kesehatan',
         ];
         $partialView = $partialViewMap[$namaInstansi] ?? 'partials.preview-unavailable';
 
@@ -99,6 +108,7 @@ class FormController extends Controller
             $rangeMap = [
                 'Dinas Lingkungan Hidup' => 'A2:D13',
                 'Badan Urusan Logistik (BULOG)' => 'A3:N9',
+                'Dinas Perhubungan' => 'A3:E14',
                 'Dinas Pertanian, Kelautan dan Perikanan' => 'A3:D14',
                 'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)' => 'A2:D100',
                 'DPRD Kota Parepare' => 'A3:C100',
@@ -108,13 +118,13 @@ class FormController extends Controller
                 'J&T Express' => 'A2:C13',
                 'PAM Tirta Karajae' => 'A2:C13',
                 'PLN' => 'A2:D13',
-                'Pos Indonesia' => 'A2:D13',
+                'Pos Indonesia' => 'A2:F13',
                 'RS Fatima' => 'A2:C13',
                 'RSUD Andi Makkasau' => 'A2:C13',
                 'Perusahaan TV Kabel' => 'A2:C13',
                 'SAMSAT' => 'A2:P32',
                 'BPJS Ketenagakerjaan' => 'A2:C13',
-                'Dinas Perdagangan' => 'A2:B13',
+                'Dinas Perdagangan' => 'A2:H13',
                 'Perusahaan Es Kristal' => 'A2:B13',
                 'Hadji Kalla Toyota' => 'A2:C13',
                 'Mandiri Taspen' => 'A2:B13',
@@ -125,6 +135,14 @@ class FormController extends Controller
                 'Universitas Negeri Makassar - Parepare' => 'A2:B13',
                 'Perumahan' => 'A2:C13',
                 'Swadharma Sarana Informatika' => 'A2:C13',
+                'KPPN' => 'A3:E14',
+                'Dinas PUPR' => 'A2:D13',
+                'UPTD Pasar' => 'A3:K14',
+                'Dinas Komunikasi dan Informatika' => 'A2:E13',
+                'TELKOM' => 'A2:E13',
+                'Dinas Perkimtan' => 'A2:C13',
+                'Pengadilan Negeri' => 'A2:B13',
+                'Dinas Kesehatan' => 'A3:E14',
             ];
 
             if (!isset($rangeMap[$namaInstansi])) {

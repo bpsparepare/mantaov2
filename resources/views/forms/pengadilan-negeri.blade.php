@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Form Dinas Perdagangan')
-
 @section('body-class', 'page-form')
 
 @section('content')
@@ -9,7 +7,7 @@
     <div class="form-container">
         <div class="form-header">
             <h1>Formulir Bulanan</h1>
-            <p>Dinas Perdagangan</p>
+            <p>Pengadilan Negeri</p>
         </div>
 
         @if(session('success'))
@@ -21,7 +19,7 @@
 
         <form action="{{ route('data.store') }}" method="POST" id="data-form">
             @csrf
-            <input type="hidden" name="nama_instansi" value="Dinas Perdagangan">
+            <input type="hidden" name="nama_instansi" value="Pengadilan Negeri">
             <div class="form-group">
                 <label for="bulan">Pilih Bulan Pelaporan:</label>
                 <select id="bulan" name="bulan" required>
@@ -41,45 +39,10 @@
                 </select>
             </div>
 
-            <fieldset>
-                <legend>Data Perdagangan</legend>
-                <div class="form-group">
-                    <label for="pedagang_kaki_lima">Jumlah Pedagang Kaki Lima:</label>
-                    <input type="number" step="1" id="pedagang_kaki_lima" name="perdagangan_pedagang_kaki_lima" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="warung_toko">Jumlah Warung/Toko:</label>
-                    <input type="number" step="1" id="warung_toko" name="perdagangan_warung_toko" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="minimarket">Jumlah Minimarket:</label>
-                    <input type="number" step="1" id="minimarket" name="perdagangan_minimarket" required value="0">
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Industri Kecil & Menengah (IKM)</legend>
-                <div class="form-group">
-                    <label for="imk_jumlah">Jumlah Unit Usaha:</label>
-                    <input type="number" step="1" id="imk_jumlah" name="perdagangan_imk_jumlah" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="imk_pendapatan">Pendapatan (Rp):</label>
-                    <input type="number" step="any" id="imk_pendapatan" name="perdagangan_imk_pendapatan" required value="0">
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Industri Besar & Sedang (IBS)</legend>
-                <div class="form-group">
-                    <label for="ibs_jumlah">Jumlah Unit Usaha:</label>
-                    <input type="number" step="1" id="ibs_jumlah" name="perdagangan_ibs_jumlah" required value="0">
-                </div>
-                <div class="form-group">
-                    <label for="ibs_pendapatan">Pendapatan (Rp):</label>
-                    <input type="number" step="any" id="ibs_pendapatan" name="perdagangan_ibs_pendapatan" required value="0">
-                </div>
-            </fieldset>
+            <div class="form-group">
+                <label for="jumlah_kasus">Jumlah Kasus:</label>
+                <input type="number" step="1" id="jumlah_kasus" name="pn_jumlah_kasus" required placeholder="Jumlah kasus">
+            </div>
 
             <button type="submit" class="submit-btn">
                 <span class="btn-text">Kirim Data</span>
@@ -96,10 +59,9 @@
             </div>
             <p>Data terkini dari Google Sheet.</p>
         </div>
-
         <div class="table-wrapper">
-            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('Dinas Perdagangan')) }}">
-                @include('partials.preview-table-dinas-perdagangan', ['sheetData' => $sheetData, 'previewError' => $previewError])
+            <div id="preview-table-container" data-url="{{ route('preview.data', Str::slug('Pengadilan Negeri')) }}">
+                @include('partials.preview-table-pengadilan-negeri', ['sheetData' => $sheetData, 'previewError' => $previewError])
             </div>
         </div>
     </div>

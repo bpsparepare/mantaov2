@@ -44,6 +44,14 @@ return [
         'Universitas Negeri Makassar - Parepare',
         'Perumahan',
         'Swadharma Sarana Informatika',
+        'KPPN',
+        'Dinas PUPR',
+        'UPTD Pasar',
+        'Dinas Komunikasi dan Informatika',
+        'TELKOM',
+        'Dinas Perkimtan',
+        'Pengadilan Negeri',
+        'Dinas Kesehatan',
     ],
 
     /*
@@ -57,7 +65,7 @@ return [
     'spreadsheet_ids' => [
         'Badan Urusan Logistik (BULOG)' => '1msiZq9JHysmYanxRMQlovnRz91y_u3fwwrIDkGOCm64',
         'Dinas Lingkungan Hidup' => '1GGyFqetMjJCIoycemP2HnunPuGJywa7IHx9LaN1PQLk',
-        'Dinas Perhubungan' => 'GANTI_DENGAN_ID_SPREADSHEET_PERHUBUNGAN',
+        'Dinas Perhubungan' => '13CzUgWydc9nd-0mgenSNWWdGCAJDQgN-_Aib8QRAx_Q',
         'Dinas Pertanian, Kelautan dan Perikanan' => '13RBTc8JzAInPmRSrg3GPdwUhb0WWE-KmMxKwZWlsmyg',
         'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)' => '18G9J4RW1LgIRKmDmRLRsM5MAaZ0EiiCgE6xPlLpinEs',
         'DPRD Kota Parepare' => '1cRKuWVXCtewM-ltYVfAUQovISPNipDGq_RxECFsjQkI',
@@ -83,14 +91,22 @@ return [
         'Universitas Muhammadiyah Parepare' => '1PL7jhfR_UezIAlYjdkwjCMBRfJATCNzXaeQBZ4XBwys',
         'Universitas Negeri Makassar - Parepare' => '1tMN-N-WVQjR115kaDJgtLDDeMwoHLS3IUL-s5LX44xE',
         'Perumahan' => '1VhoaWq3nMRCi8IHny98CrTvLwzNF13QStDLdZwGewF4',
-        'Swadharma Sarana Informatika' => '1BL1mL2q1QoytkMglnPyRWaAebAaygsfb-jMYCjfgldM'
+        'Swadharma Sarana Informatika' => '1BL1mL2q1QoytkMglnPyRWaAebAaygsfb-jMYCjfgldM',
+        'KPPN' => '1Mcgm8WawMMGou_qqYOAAfJtyKA94nB-tjbMNNzaishU',
+        'Dinas PUPR' => '1FhesxAAUPvFejzIlKbkfZ7B5szjFUrfK1OwW5Y1IXZE',
+        'UPTD Pasar' => '1XqyLNiZIiNOmJHEBQY6nFXsWsaSbdWW64hKi0i292-o',
+        'Dinas Komunikasi dan Informatika' =>  '12gz1a3FrNmbfnHLKNgqgwRfJrpAJTeuVZ0aaqHNCYdM',
+        'TELKOM' => '1voK7VYs_oCbTrI6NEKdaQ1mYdfrlxiR6ppsBKGDubQM',
+        'Dinas Perkimtan' => '1w0xxAQx1iPuCpfhDr8V41vIOAIbbv4uz4YCh82DnHqU',
+        'Pengadilan Negeri' => '1yG6llEedn8Y5uEuj1J2f_lxbZoMRCRuTCzS1nmUjeG8',
+        'Dinas Kesehatan' => '1GonmgpWkZRgZvdaQYGuO10ce1Alp1Lz4SnJFNKsh_9Q',
         // Tambahkan instansi lain jika ada
     ],
 
     'gdrive_links' => [
         'Badan Urusan Logistik (BULOG)' => 'https://drive.google.com/drive/folders/1t7s4dPZdy9HUWVXXKqmzun9_lqzLgrGq',
         'Dinas Lingkungan Hidup' => 'https://drive.google.com/drive/folders/1AT_DDrbbN0TkmDSXK_ftK8lZ329bVAvV',
-        'Dinas Perhubungan' => '#',
+        'Dinas Perhubungan' => 'https://drive.google.com/drive/folders/1lKzo0C2KahvOVM5sUDeU7p1yL4Q_tocW',
         'Dinas Pertanian, Kelautan dan Perikanan' => 'https://drive.google.com/drive/folders/1FncPopyFdgySqHS7jHeb0nYMFjjIGG5e',
         'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)' => 'https://drive.google.com/drive/folders/1pg3fyl_rnTZpbJExcJT4zBBW9GLhHHDL',
         'DPRD Kota Parepare' => 'https://drive.google.com/drive/folders/1RG_vJ6pUAQ0k1lFJbJN89BNmfUNjadDj',
@@ -117,6 +133,33 @@ return [
         'Universitas Muhammadiyah Parepare' => 'https://drive.google.com/drive/folders/16ikSd32glNUCwCtLVOrFoWsmfaYb3ei7',
         'Universitas Negeri Makassar - Parepare' => 'https://drive.google.com/drive/folders/13B9RZ3zy3Bom-HT2OGeDe5Hg2oU2RYzG',
         'Perumahan' => 'https://drive.google.com/drive/folders/1mtBYm2uOhekNJU49m8VoRGnGp_RAJcLB',
-        'Swadharma Sarana Informatika' => 'https://drive.google.com/drive/folders/1AoqWaxtSKhk-kHxQ5Nd2AgfDhAA1y8L6'
+        'Swadharma Sarana Informatika' => 'https://drive.google.com/drive/folders/1AoqWaxtSKhk-kHxQ5Nd2AgfDhAA1y8L6',
+        'KPPN' => 'https://drive.google.com/drive/folders/1PpdPDO4OibU1lrIrVysUerevzwK6goAl',
+        'Dinas PUPR' => 'https://drive.google.com/drive/folders/1i-7rbewACimYDKTf12f3Lv12rsjgtpjy',
+        'UPTD Pasar' => 'https://drive.google.com/drive/folders/1ia1RvBJryXVuf6QT0wTlXykrKIkgf6Jv',
+        'Dinas Komunikasi dan Informatika' => 'https://drive.google.com/drive/folders/1FRr_Sp0CvCr2ttJnSwtlGJGnVuB-VDsL',
+        'TELKOM' => 'https://drive.google.com/drive/folders/1fQs8gFpifu88Ah4QWZ_6YBhUtGZNKQxN',
+        'Dinas Perkimtan' => 'https://drive.google.com/drive/folders/1D8FfJczgSWI7vCByFq1CYyhaavTePbSp',
+        'Pengadilan Negeri' => 'https://drive.google.com/drive/folders/1-2bcXB-jqD7MrTWjOLca6ma15JWgbVwP',
+        'Dinas Kesehatan' => 'https://drive.google.com/drive/folders/1HD9V-BXerSk141NFRjpD8gdfsfp6Fyac',
+        // Tambahkan instansi lain jika ada
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | ID folder untuk Setiap Instansi (Untuk keperluan upload file)
+
+    |--------------------------------------------------------------------------
+    |
+    | Daftarkan semua ID folder di sini.
+    |
+    */
+    'drive_folder_ids' => [
+        'PLN' => '1dn_gRrjpbqK3S_x-xi5xVVeGhqXpf5-s',
+        'KPPN' => '1PpdPDO4OibU1lrIrVysUerevzwK6goAl',
+        'Dinas PUPR' => '1i-7rbewACimYDKTf12f3Lv12rsjgtpjy',
+        'Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu (DPMPTSP)' => '1pg3fyl_rnTZpbJExcJT4zBBW9GLhHHDL',
+        'Dinas Perkimtan' => '1D8FfJczgSWI7vCByFq1CYyhaavTePbSp',
+        'Dinas Kesehatan' => '1HD9V-BXerSk141NFRjpD8gdfsfp6Fyac',
     ],
 ];
